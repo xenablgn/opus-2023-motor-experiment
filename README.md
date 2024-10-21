@@ -1,6 +1,20 @@
-# opus-2023-motor-experiment
+## PhD Opus Grant (2023) - Study 2: Time Perception and Motor Variance Experiment - Data & Codes
 
-## PhD Opus 2023: Time Perception and Motor Variance Experiment - Data & Codes
+### Title
+**Temporal Error Monitoring: Monitoring of Internal Clock or Just Motor Noise?**
+
+### Authors
+Sena N. Bilgin¹, Tadeusz W. Kononowicz¹²
+
+### Affiliations
+¹ Institute of Psychology, Polish Academy of Sciences, Ul. Jaracza 1, 00-378, Poland  
+² Université Paris-Saclay, CNRS, Institut des Neurosciences Paris-Saclay (NeuroPSI), 91400 Saclay, France
+
+### Classification
+Social Sciences/Psychological and Cognitive Sciences, Biological Sciences/Neuroscience
+
+### Keywords
+timing, time perception, error monitoring, self-monitoring, metacognition.
 
 ### Overview
 
