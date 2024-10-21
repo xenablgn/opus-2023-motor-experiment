@@ -1,7 +1,4 @@
-## PhD Opus Grant (2023) - Study 2: Time Perception and Motor Variance Experiment - Data & Codes
-
-### Title
-**Temporal Error Monitoring: Monitoring of Internal Clock or Just Motor Noise?**
+# Temporal Error Monitoring: Monitoring of Internal Clock or Just Motor Noise? (PhD (2023))
 
 ### Authors
 Sena N. Bilgin¹, Tadeusz W. Kononowicz¹²
