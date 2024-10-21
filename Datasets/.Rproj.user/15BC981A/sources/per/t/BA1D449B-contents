@@ -1,0 +1,574 @@
+
+
+
+
+
+
+library(report)
+## Standard deviation - mean calculations:
+
+#A):
+# Summary statistics for reacting data
+reacting_cv_normal <- ddply(data_reacting, .(SubjID,Session), summarise, mean_tp=mean(ActionTiming), sdev=sd(ActionTiming))
+# Summary statistics for reacting data- Conf
+reacting_cv_normal_conf <- ddply(data_reacting, .(SubjID,Session,conf_level), summarise, mean_tp=mean(ActionTiming), sdev=sd(ActionTiming))
+reacting_cv_normal_conf <-na.omit(reacting_cv_normal_conf)
+
+#B):
+# Summary statistics for reacting data with MotorInvolvement 
+reacting_cv_MotorInvolvement <- ddply(data_reacting, .(SubjID,Session,MotorInvolvement), summarise, mean_tp=mean(ActionTiming), sdev=sd(ActionTiming))
+# Summary statistics for reacting data with MotorInvolvement-Conf
+reacting_cv_MotorInvolvement_conf <- ddply(data_reacting, .(SubjID,Session,MotorInvolvement,conf_level), summarise, mean_tp=mean(ActionTiming), sdev=sd(ActionTiming))
+reacting_cv_MotorInvolvement_conf <-na.omit(reacting_cv_MotorInvolvement_conf)
+
+#C):
+# Summary statistics for reacting data with MotorSide
+reacting_cv_MotorSide <- ddply(data_reacting, .(SubjID,Session,MotorSide), summarise, mean_tp=mean(ActionTiming), sdev=sd(ActionTiming))
+# Summary statistics for reacting data with MotorSide-Conf
+reacting_cv_MotorSide_conf <- ddply(data_reacting, .(SubjID,Session,MotorSide,conf_level), summarise, mean_tp=mean(ActionTiming), sdev=sd(ActionTiming))
+reacting_cv_MotorSide_conf <-na.omit(reacting_cv_MotorSide_conf)
+
+
+
+
+# Linear mixed-effects models- Trial Level:
+
+
+# Define the linear mixed-effects models
+
+## Model 1: Timing at the Trial Level
+model_reacting_trial <- lmer(ActionTiming ~ (1 | SubjID/Session), data = data_reacting)
+summary(model_reacting_trial)
+model_reacting_trial_data <- ggpredict(model_reacting_trial, terms = "Session")
+plot(model_reacting_trial_data)
+report(model_reacting_trial)
+## Model 2: Timing with Confidence Level
+model_reacting_conf <- lmer(ActionTiming ~ relevel(as.factor(conf_level), 1) + (1 | SubjID/Session), data = data_reacting)
+summary(model_reacting_conf)
+model_reacting_conf_data <- ggpredict(model_reacting_conf, terms = "conf_level")
+plot(model_reacting_conf_data)
+report(model_reacting_conf)
+
+
+
+
+## Model 3: Timing with Motor Involvement
+model_reacting_motor_involvement <- lmer(ActionTiming ~ relevel(as.factor(MotorInvolvement), 2) + (1 | SubjID/Session), data = data_reacting)
+summary(model_reacting_motor_involvement)
+model_reacting_motor_involvement_data <- ggpredict(model_reacting_motor_involvement, terms = "MotorInvolvement")
+plot(model_reacting_motor_involvement_data)
+report(model_reacting_motor_involvement)
+## Model 4: Timing with Motor Involvement and Confidence Level
+model_reacting_motor_involvement_conf <- lmer(ActionTiming ~ MotorInvolvement * conf_level + (1 | SubjID/Session), data = data_reacting)
+summary(model_reacting_motor_involvement_conf)
+model_reacting_motor_involvement_conf_data <- ggpredict(model_reacting_motor_involvement_conf, terms = c("conf_level", "MotorInvolvement"))
+plot(model_reacting_motor_involvement_conf_data)
+report(model_reacting_motor_involvement_conf)
+
+
+
+## Model 5: Timing with Motor Side
+model_reacting_motor_side <- lmer(ActionTiming ~ MotorSide + (1 | SubjID/Session), data = data_reacting)
+summary(model_reacting_motor_side)
+model_reacting_motor_side_data <- ggpredict(model_reacting_motor_side, terms = c("MotorSide"))
+plot(model_reacting_motor_side_data)
+report(model_reacting_motor_side)
+## Model 6: Timing with Motor Side and Confidence Level
+model_reacting_motor_side_conf <- lmer(ActionTiming ~ MotorSide * conf_level + (1 | SubjID/Session), data = data_reacting)
+summary(model_reacting_motor_side_conf)
+model_reacting_motor_side_conf_data <- ggpredict(model_reacting_motor_side_conf, terms = c("conf_level", "MotorSide"))
+plot(model_reacting_motor_side_conf_data)
+report(model_reacting_motor_side_conf)
+
+
+
+
+# Linear mixed-effects models - Session Level:
+
+## Timing Session Level Mean comparison
+mean_Session_normal <- lm(mean_tp ~ (1), data = reacting_cv_normal)
+summary(mean_Session_normal)
+mean_Session_normal_conf <- lmer(mean_tp ~ conf_level + (1 | SubjID), data = reacting_cv_normal_conf)
+summary(mean_Session_normal_conf)
+report(mean_Session_normal_conf)
+
+mean_Session_normal_conf <- lmer(sdev ~ conf_level + (1 | SubjID), data = reacting_cv_normal_conf)
+summary(mean_Session_normal_conf)
+report(mean_Session_normal_conf)
+
+mean_Session_MotorInvolvement <- lmer(mean_tp ~ MotorInvolvement + (1 | SubjID), data = reacting_cv_MotorInvolvement)
+summary(mean_Session_MotorInvolvement)
+report(mean_Session_MotorInvolvement)
+mean_Session_MotorInvolvement_conf <- lmer(mean_tp ~ MotorInvolvement * conf_level + (1 | SubjID), data = reacting_cv_MotorInvolvement_conf)
+summary(mean_Session_MotorInvolvement_conf)
+
+mean_Session_MotorSide <- lmer(mean_tp ~ MotorSide + (1 | SubjID), data = reacting_cv_MotorSide)
+summary(mean_Session_MotorSide)
+report(mean_Session_MotorSide)
+mean_Session_MotorSide_conf <- lmer(mean_tp ~ MotorSide * conf_level + (1 | SubjID), data = reacting_cv_MotorSide_conf)
+summary(mean_Session_MotorSide_conf)
+
+## Timing Session Level std comparison
+std_Session_normal <- lm(sdev ~ (1), data = reacting_cv_normal)
+summary(std_Session_normal)
+std_Session_normal_conf <- lmer(sdev ~ conf_level + (1 | SubjID), data = reacting_cv_normal_conf)
+summary(std_Session_normal_conf)
+
+std_Session_MotorInvolvement <- lmer(sdev ~ MotorInvolvement + (1 | SubjID), data = reacting_cv_MotorInvolvement)
+summary(std_Session_MotorInvolvement)
+report(std_Session_MotorInvolvement)
+
+
+std_Session_MotorInvolvement_conf <- lmer(sdev ~ MotorInvolvement * conf_level + (1 | SubjID), data = reacting_cv_MotorInvolvement_conf)
+summary(std_Session_MotorInvolvement_conf)
+
+std_Session_MotorSide <- lmer(sdev ~ MotorSide + (1 | SubjID), data = reacting_cv_MotorSide)
+summary(std_Session_MotorSide)
+report(std_Session_MotorSide)
+std_Session_MotorSide_conf <- lmer(sdev ~ MotorSide * conf_level + (1 | SubjID), data = reacting_cv_MotorSide_conf)
+summary(std_Session_MotorSide_conf)
+
+
+
+reacting_cv_normal_conf$conf_level <- factor(reacting_cv_normal_conf$conf_level, levels = c("Low", "High"))
+
+
+## Timing Session Level mean comparison Plots
+p <- ggplot(reacting_cv_normal_conf, aes(x = conf_level, y = mean_tp, color = conf_level)) + 
+  ggdist::stat_halfeye( adjust = .6,  width = .6, .width = 0,  justification = -.2, point_colour = NA) + 
+  geom_boxplot(width = .2, outlier.shape = NA) +
+  gghalves::geom_half_point( side = "l", range_scale = .6, alpha = .5,size=10, pch = 20) +
+  scale_color_manual(values=cond_conf, labels=c( '1'='Low', '2'='High')) +
+  scale_fill_manual(values=cond_conf, labels=c( '1'='Low', '2'='High')) +
+  labs(y="µ(RTs)") +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(legend.title.align = 0.5)+
+  theme_classic()+
+  theme(legend.position="none")+
+  theme(axis.line = element_line(colour = "black"))+
+  theme(plot.title = element_text(color="black", size=40, face="bold"),
+        plot.subtitle= element_text(color="black", size=40, face="bold.italic"),
+        plot.caption= element_text(color="black", size=40, face="italic"),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(color="black", size=40,hjust = 0.5),
+        legend.title =element_blank(),
+        legend.text  = element_text(color="black", size=40),
+        strip.text.x = element_text(size = 40, color = "black", face = "bold"),
+        strip.text.y = element_text(size = 40, color = "black", face = "bold"),
+        axis.text.x  = element_text(color="black", size=40,hjust = 0.5),
+        axis.text.y  = element_text(size = 40, color = "black"),
+        strip.background = element_rect(fill="lightYellow", size=1, color="black"))+
+  theme(legend.position="none")+
+  theme(legend.justification=c(1,0), legend.key.size = unit(0.25, "cm"),
+        legend.background = element_rect(fill = NA, color = NA), legend.title=element_text(size=40),
+        legend.text=element_text(size=40))+
+  stat_summary(fun.y=mean, geom="point", size=1, aes(color=conf_level))
+p
+
+
+
+
+
+p <- ggplot(reacting_cv_MotorInvolvement, aes(x = MotorInvolvement, y = mean_tp, color = MotorInvolvement)) + 
+  ggdist::stat_halfeye( adjust = .6,  width = .6, .width = 0,  justification = -.2, point_colour = NA) + 
+  geom_boxplot(width = .2, outlier.shape = NA) +
+  gghalves::geom_half_point( side = "l", range_scale = .6, alpha = .5,size=8, pch = 20) +
+  scale_color_manual(values=cond_color_movement, labels=c( '1'='Move', '2'='Press')) +
+  scale_fill_manual(values=cond_color_movement, labels=c( '1'='Move', '2'='Press')) +
+  labs(y="µ(RTs)") +
+  labs(x="MotorInvolvement") +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(legend.title.align = 0.5)+
+  theme_classic()+
+  theme(legend.position="none")+
+  theme(axis.line = element_line(colour = "black"))+
+  theme(plot.title = element_text(color="black", size=25, face="bold"),
+        plot.subtitle= element_text(color="black", size=25, face="bold.italic"),
+        plot.caption= element_text(color="black", size=25, face="italic"),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(color="black", size=25,hjust = 0.5),
+        legend.title =element_blank(),
+        legend.text  = element_text(color="black", size=25),
+        strip.text.x = element_text(size = 25, color = "black", face = "bold"),
+        strip.text.y = element_text(size = 25, color = "black", face = "bold"),
+        axis.text.x  = element_text(color="black", size=25,hjust = 0.5),
+        axis.text.y  = element_text(size = 25, color = "black"),
+        strip.background = element_rect(fill="lightYellow", size=1, color="black"))+
+  theme(legend.position="none")+
+  theme(legend.justification=c(1,0), legend.key.size = unit(0.25, "cm"),
+        legend.background = element_rect(fill = NA, color = NA), legend.title=element_text(size=10),
+        legend.text=element_text(size=8))+
+  stat_summary(fun.y=mean, geom="point", size=1, aes(color=MotorInvolvement))
+p
+
+
+
+
+p <- ggplot(reacting_cv_MotorSide, aes(x = MotorSide, y = mean_tp, linetype = MotorSide)) + 
+  ggdist::stat_halfeye( adjust = .6,  width = .6, .width = 0,  justification = -.2, point_colour = NA) + 
+  geom_boxplot(width = .2, outlier.shape = NA, color = "black") +
+  gghalves::geom_half_point(side = "l", range_scale = .6, alpha = .5, size = 8, pch = 20, fill = "white", color = "black") +
+  labs(y = "µ(RTs)") +
+  labs(x = "MotorSide") +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(legend.title.align = 0.5)+
+  theme_classic()+
+  theme(legend.position="none")+
+  theme(axis.line = element_line(colour = "black"))+
+  theme(plot.title = element_text(color="black", size=25, face="bold"),
+        plot.subtitle= element_text(color="black", size=25, face="bold.italic"),
+        plot.caption= element_text(color="black", size=25, face="italic"),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(color="black", size=25,hjust = 0.5),
+        legend.title =element_blank(),
+        legend.text  = element_text(color="black", size=25),
+        strip.text.x = element_text(size = 25, color = "black", face = "bold"),
+        strip.text.y = element_text(size = 25, color = "black", face = "bold"),
+        axis.text.x  = element_text(color="black", size=25,hjust = 0.5),
+        axis.text.y  = element_text(size = 25, color = "black"),
+        strip.background = element_rect(fill="lightYellow", size=1, color="black"))+
+  theme(legend.position="none")+
+  theme(legend.justification=c(1,0), legend.key.size = unit(0.25, "cm"),
+        legend.background = element_rect(fill = NA, color = NA), legend.title=element_text(size=10),
+        legend.text=element_text(size=8))+
+  stat_summary(fun.y=mean, geom="point", size=1, aes(color="black"))
+p
+
+
+
+
+
+
+
+
+## Timing Session Level std comparison Plots
+
+p <- ggplot(reacting_cv_normal_conf, aes(x = conf_level, y = sdev, color = conf_level)) + 
+  ggdist::stat_halfeye( adjust = .6,  width = .6, .width = 0,  justification = -.2, point_colour = NA) + 
+  geom_boxplot(width = .2, outlier.shape = NA) +
+  gghalves::geom_half_point( side = "l", range_scale = .6, alpha = .5,size=10, pch = 20) +
+  scale_color_manual(values=cond_conf, labels=c( '1'='Low', '2'='High')) +
+  scale_fill_manual(values=cond_conf, labels=c( '1'='Low', '2'='High')) +
+  labs(y="σ(RTs)") +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(legend.title.align = 0.5)+
+  theme_classic()+
+  theme(legend.position="none")+
+  theme(axis.line = element_line(colour = "black"))+
+  theme(plot.title = element_text(color="black", size=40, face="bold"),
+        plot.subtitle= element_text(color="black", size=40, face="bold.italic"),
+        plot.caption= element_text(color="black", size=40, face="italic"),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(color="black", size=40,hjust = 0.5),
+        legend.title =element_blank(),
+        legend.text  = element_text(color="black", size=40),
+        strip.text.x = element_text(size = 40, color = "black", face = "bold"),
+        strip.text.y = element_text(size = 40, color = "black", face = "bold"),
+        axis.text.x  = element_text(color="black", size=40,hjust = 0.5),
+        axis.text.y  = element_text(size = 40, color = "black"),
+        strip.background = element_rect(fill="lightYellow", size=1, color="black"))+
+  theme(legend.position="none")+
+  theme(legend.justification=c(1,0), legend.key.size = unit(0.25, "cm"),
+        legend.background = element_rect(fill = NA, color = NA), legend.title=element_text(size=40),
+        legend.text=element_text(size=40))+
+  stat_summary(fun.y=mean, geom="point", size=1, aes(color=conf_level))
+p
+
+
+
+
+
+p <- ggplot(reacting_cv_MotorInvolvement, aes(x = MotorInvolvement, y = sdev, color = MotorInvolvement)) + 
+  ggdist::stat_halfeye( adjust = .6,  width = .6, .width = 0,  justification = -.2, point_colour = NA) + 
+  geom_boxplot(width = .2, outlier.shape = NA) +
+  gghalves::geom_half_point( side = "l", range_scale = .6, alpha = .5,size=8, pch = 20) +
+  scale_color_manual(values=cond_color_movement, labels=c( '1'='Move', '2'='Press')) +
+  scale_fill_manual(values=cond_color_movement, labels=c( '1'='Move', '2'='Press')) +
+  labs(y="σ(RTs)") +
+  labs(x="MotorInvolvement") +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(legend.title.align = 0.5)+
+  theme_classic()+
+  theme(legend.position="none")+
+  theme(axis.line = element_line(colour = "black"))+
+  theme(plot.title = element_text(color="black", size=25, face="bold"),
+        plot.subtitle= element_text(color="black", size=25, face="bold.italic"),
+        plot.caption= element_text(color="black", size=25, face="italic"),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(color="black", size=25,hjust = 0.5),
+        legend.title =element_blank(),
+        legend.text  = element_text(color="black", size=25),
+        strip.text.x = element_text(size = 25, color = "black", face = "bold"),
+        strip.text.y = element_text(size = 25, color = "black", face = "bold"),
+        axis.text.x  = element_text(color="black", size=25,hjust = 0.5),
+        axis.text.y  = element_text(size = 25, color = "black"),
+        strip.background = element_rect(fill="lightYellow", size=1, color="black"))+
+  theme(legend.position="none")+
+  theme(legend.justification=c(1,0), legend.key.size = unit(0.25, "cm"),
+        legend.background = element_rect(fill = NA, color = NA), legend.title=element_text(size=10),
+        legend.text=element_text(size=8))+
+  stat_summary(fun.y=mean, geom="point", size=1, aes(color=MotorInvolvement))
+p
+
+
+
+
+p <- ggplot(reacting_cv_MotorSide, aes(x = MotorSide, y = sdev, linetype = MotorSide)) + 
+  ggdist::stat_halfeye( adjust = .6,  width = .6, .width = 0,  justification = -.2, point_colour = NA) + 
+  geom_boxplot(width = .2, outlier.shape = NA, color = "black") +
+  gghalves::geom_half_point(side = "l", range_scale = .6, alpha = .5, size = 8, pch = 20, fill = "white", color = "black") +
+  labs(y = "σ(RTs)") +
+  labs(x = "MotorSide") +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(legend.title.align = 0.5)+
+  theme_classic()+
+  theme(legend.position="none")+
+  theme(axis.line = element_line(colour = "black"))+
+  theme(plot.title = element_text(color="black", size=25, face="bold"),
+        plot.subtitle= element_text(color="black", size=25, face="bold.italic"),
+        plot.caption= element_text(color="black", size=25, face="italic"),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(color="black", size=25,hjust = 0.5),
+        legend.title =element_blank(),
+        legend.text  = element_text(color="black", size=25),
+        strip.text.x = element_text(size = 25, color = "black", face = "bold"),
+        strip.text.y = element_text(size = 25, color = "black", face = "bold"),
+        axis.text.x  = element_text(color="black", size=25,hjust = 0.5),
+        axis.text.y  = element_text(size = 25, color = "black"),
+        strip.background = element_rect(fill="lightYellow", size=1, color="black"))+
+  theme(legend.position="none")+
+  theme(legend.justification=c(1,0), legend.key.size = unit(0.25, "cm"),
+        legend.background = element_rect(fill = NA, color = NA), legend.title=element_text(size=10),
+        legend.text=element_text(size=8))+
+  stat_summary(fun.y=mean, geom="point", size=1, aes(color="black"))
+p
+
+
+# Model 1: CV_basic
+CV_basic <- lm(mean_tp ~ sdev, data = reacting_cv_normal)
+summary(CV_basic)
+model_reacting_session_data_basic <- ggpredict(CV_basic, terms = c("sdev"))
+plot(model_reacting_session_data_basic)
+report(CV_basic)
+
+# Model 2: CV_conf
+CV_conf <- lm(mean_tp ~ sdev * conf_level, data = reacting_cv_normal_conf)
+summary(CV_conf)
+model_reacting_session_data_conf <- ggpredict(CV_conf, terms = c("sdev", "conf_level"))
+plot(model_reacting_session_data_conf)
+report(CV_conf)
+
+# Model 3: CV_motor_involvement
+CV_motor_involvement <- lm(mean_tp ~ relevel(as.factor(MotorInvolvement),2) * sdev, data = reacting_cv_MotorInvolvement)
+summary(CV_motor_involvement)
+model_reacting_session_data_motor_involvement <- ggpredict(CV_motor_involvement, terms = c("sdev", "MotorInvolvement"))
+plot(model_reacting_session_data_motor_involvement)
+#sjPlot::tab_model(CV_motor_involvement)
+report(CV_motor_involvement)
+
+# Model 4: CV_motor_side
+CV_motor_side <- lm(mean_tp ~ relevel(as.factor(MotorSide),1)* sdev, data = reacting_cv_MotorSide)
+summary(CV_motor_side)
+model_reacting_session_data_motor_side <- ggpredict(CV_motor_side, terms = c("sdev", "MotorSide"))
+plot(model_reacting_session_data_motor_side)
+#sjPlot::tab_model(CV_motor_side)
+report(CV_motor_side)
+
+
+
+model_reacting_session_data_motor_side <- data.frame(ggpredict(CV_motor_side, terms = c("sdev", "MotorSide")))
+colnames(model_reacting_session_data_motor_side)[6]<- c('MotorSide')
+model_reacting_session_data_motor_involvement <- data.frame(ggpredict(CV_motor_involvement, terms = c("sdev", "MotorInvolvement")))
+colnames(model_reacting_session_data_motor_involvement)[6]<- c('MotorInvolvement')
+model_reacting_session_data_conf <- data.frame(ggpredict(CV_conf, terms = c("sdev", "conf_level")))
+colnames(model_reacting_session_data_conf)[6]<- c('conf_level')
+
+
+
+
+
+
+ggplot(model_reacting_session_data_motor_involvement,
+       aes(x,predicted,color=MotorInvolvement,fill=MotorInvolvement))+
+  labs(title='CV') +
+  labs(x="σ(RTs)")+
+  geom_line(size=6)+
+  labs(y="µ(RTs)")+
+  geom_ribbon(aes(ymin=conf.low, ymax=conf.high,fill=MotorInvolvement),alpha=0.35,color='white')+
+  scale_color_manual(values=cond_color_movement, labels=c( '1'='Move', '2'='Press')) +
+  scale_fill_manual(values=cond_color_movement, labels=c( '1'='Move', '2'='Press')) +
+  theme(legend.title.align = 0.5)+
+  theme_bw(base_size=6)+
+  theme_classic()+
+  theme(legend.justification=c(1,0), legend.position=c(0.9,0.5), legend.key.size = unit(0.25, "cm"),
+        legend.background = element_rect(fill = NA, color = NA), legend.title=element_text(size=40), legend.text=element_text(size=40))+
+  theme(plot.title = element_blank(),
+        plot.subtitle= element_text(color="black", size=40, face="bold.italic"),
+        plot.caption= element_text(color="black", size=40, face="italic"),
+        axis.title.x = element_text(color="black",size=40),
+        axis.title.y = element_text(color="black",size=40),
+        axis.text.x=element_text(color="black",size=30),
+        axis.text.y=element_text(color="black",size=35))+
+  theme(legend.position="none")
+
+
+
+ggplot(model_reacting_session_data_conf,
+       aes(x,predicted,color=conf_level,fill=conf_level))+
+  labs(title='CV') +
+  labs(x="σ(RTs)")+
+  geom_line(size=2)+
+  labs(y="µ(RTs)")+
+  geom_line(size=6)+
+  geom_ribbon(aes(ymin=conf.low, ymax=conf.high,fill=conf_level),alpha=0.35,color='white')+
+  scale_color_manual(values=cond_conf, labels=c( '1'='Low', '2'='High')) +
+  scale_fill_manual(values=cond_conf, labels=c( '1'='Low', '2'='High')) +
+  theme(legend.title.align = 0.5)+
+  theme_bw(base_size=6)+
+  theme_classic()+
+  theme(legend.justification=c(1,0), legend.position=c(0.9,0.5), legend.key.size = unit(0.25, "cm"),
+        legend.background = element_rect(fill = NA, color = NA), legend.title=element_text(size=40), legend.text=element_text(size=40))+
+  theme(plot.title = element_blank(),
+        plot.subtitle= element_text(color="black", size=40, face="bold.italic"),
+        plot.caption= element_text(color="black", size=40, face="italic"),
+        axis.title.x = element_text(color="black",size=40),
+        axis.title.y = element_text(color="black",size=40),
+        axis.text.x=element_text(color="black",size=40),
+        axis.text.y=element_text(color="black",size=40))+
+  theme(legend.position="none")
+
+
+
+ggplot(model_reacting_session_data_motor_side,
+       aes(x,predicted,linetype=MotorSide),color="black",fill="grey")+
+  labs(title='CV') +
+  labs(x="σ(RTs)")+
+  geom_line(size=6)+
+  labs(y="µ(RTs)")+
+  geom_ribbon(aes(ymin=conf.low, ymax=conf.high),fill="black",alpha=0.35,color='white')+
+  theme(legend.title.align = 0.5)+
+  theme_bw(base_size=6)+
+  theme_classic()+
+  theme(legend.justification=c(1,0), legend.position=c(0.9,0.5), legend.key.size = unit(0.25, "cm"),
+        legend.background = element_rect(fill = NA, color = NA), legend.title=element_text(size=40), legend.text=element_text(size=40))+
+  theme(plot.title = element_blank(),
+        plot.subtitle= element_text(color="black", size=40, face="bold.italic"),
+        plot.caption= element_text(color="black", size=40, face="italic"),
+        axis.title.x = element_text(color="black",size=40),
+        axis.title.y = element_text(color="black",size=40),
+        axis.text.x=element_text(color="black",size=35),
+        axis.text.y=element_text(color="black",size=35))+
+  theme(legend.position="none")
+
+
+
+
+
+
+###### #### #### #### #### #### #### #### #### #### ## Motor Rate: ###### #### #### #### #### #### #### #### #### #### ## 
+
+
+## Model 78 Timing with Motor Rate - Reacting
+model_reacting_motor_rate <- lmer(ActionTiming ~ relevel(as.factor(motor_rate), 1) + (1 | SubjID/Session), data = data_reacting)
+summary(model_reacting_motor_rate)
+model_timing_motor_rate_data <- ggpredict(model_reacting_motor_rate, terms = "motor_rate")
+plot(model_timing_motor_rate_data)
+report(model_reacting_motor_rate)
+
+
+# Summary statistics for timing data with Motor Rate
+reacting_cv_MotorRate <- ddply(data_reacting, .(SubjID, Session, motor_rate), summarise, mean_tp=mean(ActionTiming), sdev=sd(ActionTiming))
+reacting_cv_MotorRate <- na.omit(reacting_cv_MotorRate)
+
+# Linear mixed-effects models for timing data with Motor Rate at the session level
+mean_Session_MotorRate <- lm(mean_tp ~ motor_rate,  data = reacting_cv_MotorRate)
+summary(mean_Session_MotorRate)
+
+std_Session_MotorRate <- lm(sdev ~ motor_rate, data = reacting_cv_MotorRate)
+summary(std_Session_MotorRate)
+
+
+
+## Timing Session Level mean comparison Plots for Motor Rate
+p <- ggplot(reacting_cv_MotorRate, aes(x = motor_rate, y = mean_tp, color = motor_rate)) + 
+  ggdist::stat_halfeye(adjust = .6, width = .6, .width = 0, justification = -.2, point_colour = NA) + 
+  geom_boxplot(width = .2, outlier.shape = NA) +
+  gghalves::geom_half_point(side = "l", range_scale = .6, alpha = .5, size = 4, pch = 20) +
+  scale_color_manual(values = cond_color_motor_rate, labels = c('Low', 'High')) +
+  labs(y = "µ(RTs)") +
+  labs(x = "Motor Rate") +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(legend.title.align = 0.5)+
+  theme_classic()+
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(color = "black", size = 25, face = "bold"),
+        axis.title.x = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 25, hjust = 0.5),
+        strip.text.x = element_text(size = 25, color = "black", face = "bold"),
+        axis.text.x = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.text.y = element_text(size = 25, color = "black"),
+        strip.background = element_rect(fill = "lightYellow", size = 1, color = "black")) +
+  stat_summary(fun.y = mean, geom = "point", size = 1, aes(color = motor_rate))
+p
+
+
+
+## Timing Session Level std comparison Plots for Motor Rate
+p <- ggplot(reacting_cv_MotorRate, aes(x = motor_rate, y = sdev, color = motor_rate)) + 
+  ggdist::stat_halfeye(adjust = .6, width = .6, .width = 0, justification = -.2, point_colour = NA) + 
+  geom_boxplot(width = .2, outlier.shape = NA) +
+  gghalves::geom_half_point(side = "l", range_scale = .6, alpha = .5, size = 4, pch = 20) +
+  scale_color_manual(values = cond_color_motor_rate, labels = c('Low', 'High')) +
+  labs(y = "σ(RTs)") +
+  labs(x = "Motor Rate") +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(legend.title.align = 0.5)+
+  theme_classic()+
+  theme(legend.position = "none")+
+  theme(plot.title = element_text(color = "black", size = 25, face = "bold"),
+        axis.title.x = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 25, hjust = 0.5),
+        strip.text.x = element_text(size = 25, color = "black", face = "bold"),
+        axis.text.x = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.text.y = element_text(size = 25, color = "black"),
+        strip.background = element_rect(fill = "lightYellow", size = 1, color = "black")) +
+  stat_summary(fun.y = mean, geom = "point", size = 1, aes(color = motor_rate))
+p
+
+
+
+model_motor_rate <- lm(mean_tp ~ motor_rate * sdev , data = reacting_cv_MotorRate)
+summary(model_motor_rate)
+
+model_timing_session_data_motor_rate <- ggpredict(model_motor_rate, terms = c("sdev", "motor_rate"))
+plot(model_timing_session_data_motor_rate)
+
+model_timing_session_data_motor_rate <- data.frame(ggpredict(model_motor_rate, terms = c("sdev", "motor_rate")))
+colnames(model_timing_session_data_motor_rate)[6]<- c('motor_rate')
+
+ggplot(model_timing_session_data_motor_rate,
+       aes(x,predicted,color=motor_rate,fill=motor_rate))+
+  labs(title='Motor Rate') +
+  labs(x="σ(RTs)")+
+  geom_line(size=2)+
+  labs(y="µ(RTs)")+
+  geom_ribbon(aes(ymin=conf.low, ymax=conf.high,fill=motor_rate),alpha=0.35,color='white')+
+  scale_color_manual(values = cond_color_motor_rate, labels = c('Low', 'High')) +
+  scale_fill_manual(values = cond_color_motor_rate, labels = c('Low', 'High')) +
+  theme(legend.title.align = 0.5)+
+  theme_bw(base_size=6)+
+  theme_classic()+
+  theme(legend.justification=c(1,0), legend.position=c(0.9,0.5), legend.key.size = unit(0.25, "cm"),
+        legend.background = element_rect(fill = NA, color = NA), legend.title=element_text(size=40), legend.text=element_text(size=40))+
+  theme(plot.title = element_blank(),
+        plot.subtitle= element_text(color="black", size=40, face="bold.italic"),
+        plot.caption= element_text(color="black", size=40, face="italic"),
+        axis.title.x = element_text(color="black",size=40),
+        axis.title.y = element_text(color="black",size=40),
+        axis.text.x=element_text(color="black",size=30),
+        axis.text.y=element_text(color="black",size=35))+
+  theme(legend.position="none")
+
+
+
+

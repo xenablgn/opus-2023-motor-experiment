@@ -1,0 +1,1080 @@
+################################ General Stats - Error Monitoring Trial Level  ################################ 
+##xCenter 1200
+##yCenter 675
+##screenXpixels 2400
+##screenYpixels 1350
+
+# For TP Task
+
+stat_timing <- lmer(ActionTiming ~ ActionDataConfidenceXaxis + (1|SubjID), data = data_timing)
+summary(stat_timing) 
+data_timing_plot <- ggpredict(stat_timing, terms = c("ActionDataConfidenceXaxis [all]"))
+plot(data_timing_plot, add.data = FALSE, dot.size = 2)
+report(stat_timing)
+
+
+data_timing$conf_level <- as.factor(data_timing$conf_level)
+data_timing$conf_level <- relevel(data_timing$conf_level, ref = "High")
+stat_timing_conf_level <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * conf_level + (1|SubjID), data = data_timing)
+summary(stat_timing_conf_level) 
+data_timing_conf_level_plot <- ggpredict(stat_timing_conf_level, terms = c("ActionDataConfidenceXaxis [all]", "conf_level"))
+plot(data_timing_conf_level_plot, add.data = FALSE, dot.size = 2)
+report(stat_timing_conf_level)
+
+anova(stat_timing,stat_timing_conf_level)
+
+
+stat_timing_motor_rate <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * motor_rate + (1|SubjID), data = data_timing)
+summary(stat_timing_motor_rate) 
+data_timing_motor_level_plot <- ggpredict(stat_timing_motor_rate, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate"))
+plot(data_timing_motor_level_plot, add.data = FALSE, dot.size = 2)
+
+anova(stat_timing,stat_timing_motor_rate)
+
+
+
+data_timing$MotorSide <- as.factor(data_timing$MotorSide)
+data_timing$MotorSide <- relevel(data_timing$MotorSide, ref = "NDS")
+stat_timing_motor_side <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * MotorSide+ (1|SubjID), data = data_timing)
+summary(stat_timing_motor_side) 
+data_timing_motor_side_plot <- ggpredict(stat_timing_motor_side, terms = c("ActionDataConfidenceXaxis [all]", "MotorSide"))
+plot(data_timing_motor_side_plot, add.data = FALSE, dot.size = 2)
+report(stat_timing_motor_side)
+
+anova(stat_timing,stat_timing_motor_side)
+
+
+
+data_timing$MotorInvolvement <- as.factor(data_timing$MotorInvolvement)
+data_timing$MotorInvolvement <- relevel(data_timing$MotorInvolvement, ref = "Press")
+stat_timing_motor_involvement <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * MotorInvolvement + (1|SubjID), data = data_timing)
+summary(stat_timing_motor_involvement) 
+data_timing_motor_involvement_plot <- ggpredict(stat_timing_motor_involvement, terms = c("ActionDataConfidenceXaxis [all]", "MotorInvolvement"))
+plot(data_timing_motor_involvement_plot, add.data = FALSE, dot.size = 2)
+report(stat_timing_motor_involvement)
+
+
+
+anova(stat_timing,stat_timing_motor_involvement)
+
+
+
+
+# For RT Task
+
+
+stat_reacting <- lmer(ActionTiming ~ ActionDataConfidenceXaxis + (1|SubjID), data = data_reacting)
+summary(stat_reacting) 
+data_reacting_plot <- ggpredict(stat_reacting, terms = c("ActionDataConfidenceXaxis [all]"))
+plot(data_reacting_plot, add.data = FALSE, dot.size = 2)
+report(stat_reacting)
+
+
+data_reacting$conf_level <- as.factor(data_reacting$conf_level)
+data_reacting$conf_level <- relevel(data_reacting$conf_level, ref = "High")
+stat_reacting_conf_level <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * conf_level + (1|SubjID), data = data_reacting)
+summary(stat_reacting_conf_level) 
+data_timing_conf_level_plot <- ggpredict(stat_reacting_conf_level, terms = c("ActionDataConfidenceXaxis [all]", "conf_level"))
+plot(data_timing_conf_level_plot, add.data = FALSE, dot.size = 2)
+report(stat_reacting_conf_level)
+
+anova(stat_reacting,stat_reacting_conf_level)
+
+
+
+data_reacting$MotorSide <- as.factor(data_reacting$MotorSide)
+data_reacting$MotorSide <- relevel(data_reacting$MotorSide, ref = "NDS")
+stat_reacting_motor_side <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * MotorSide + (1|SubjID), data = data_reacting)
+summary(stat_reacting_motor_side) 
+data_timing_motor_side_plot <- ggpredict(stat_reacting_motor_side, terms = c("ActionDataConfidenceXaxis [all]", "MotorSide"))
+plot(data_timing_motor_side_plot, add.data = FALSE, dot.size = 2)
+report(stat_reacting_motor_side)
+
+anova(stat_reacting,stat_reacting_motor_side)
+
+
+
+
+data_reacting$MotorInvolvement <- as.factor(data_reacting$MotorInvolvement)
+data_reacting$MotorInvolvement <- relevel(data_reacting$MotorInvolvement, ref = "Press")
+stat_reacting_motor_involvement <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * MotorInvolvement+ (1|SubjID), data = data_reacting)
+summary(stat_reacting_motor_involvement) 
+report(stat_reacting_motor_involvement)
+data_timing_motor_involvement_plot <- ggpredict(stat_reacting_motor_involvement, terms = c("ActionDataConfidenceXaxis [all]", "MotorInvolvement"))
+plot(data_timing_motor_involvement_plot, add.data = FALSE, dot.size = 2)
+
+anova(stat_reacting,stat_reacting_motor_involvement)
+
+
+
+
+
+
+### PLOTS
+
+
+
+
+
+
+
+
+
+data_timing_motor_side_plot <- data.frame(ggpredict(stat_timing_motor_side, terms = c("ActionDataConfidenceXaxis [all]", "MotorSide")))
+colnames(data_timing_motor_side_plot)[6] <- 'MotorSide'
+
+ggplot(data_timing_motor_side_plot, aes(x, predicted, linetype = MotorSide)) +
+  geom_line(size = 4, color = "black") +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), fill = "grey", alpha = 0.2, color = 'black') +
+  geom_xsidedensity(aes(y = after_stat(scaled)), alpha = 0.2, size = 1, show.legend = TRUE) +
+  geom_ysidedensity(aes(x = after_stat(scaled)), alpha = 0.2, size = 1, show.legend = TRUE) +
+  labs(y = "Timing Response (s) (TPs)", x = "Monitoring Response") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 25, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 25, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 25),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  scale_ysidex_continuous(guide = guide_axis(angle = 90), minor_breaks = NULL) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "bottom") 
+
+
+
+data_timing_conf_level_plot <- data.frame(ggpredict(stat_timing_conf_level, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+colnames(data_timing_conf_level_plot)[6] <- 'Confidence'
+
+ggplot(data_timing_conf_level_plot, aes(x, predicted, fill = Confidence, color = Confidence)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = Confidence), color = 'white', alpha = 0.2) +
+  geom_xsidedensity(aes(y = after_stat(scaled)), alpha = 0.2, size = 1, show.legend = TRUE) +
+  geom_ysidedensity(aes(x = after_stat(scaled)), alpha = 0.2, size = 1, show.legend = TRUE) +
+  scale_color_manual(values=cond_conf, labels=c( '1'='Low', '2'='High')) +
+  scale_fill_manual(values=cond_conf, labels=c( '1'='Low', '2'='High')) +
+  labs(y = "TP(s)", x = "EM Response") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 25, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 25, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 25),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  scale_ysidex_continuous(guide = guide_axis(angle = 90), minor_breaks = NULL) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none")
+
+
+cond_color_movement <- c('brown4', 'brown2')
+
+data_timing_motor_involvement_plot <- data.frame(ggpredict(stat_timing_motor_involvement, terms = c("ActionDataConfidenceXaxis [all]", "MotorInvolvement")))
+colnames(data_timing_motor_involvement_plot)[6] <- 'MotorInvolvement'
+
+ggplot(data_timing_motor_involvement_plot, aes(x, predicted, fill = MotorInvolvement, color = MotorInvolvement)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = MotorInvolvement), color = 'white', alpha = 0.2) +
+  geom_xsidedensity(aes(y = after_stat(scaled)), alpha = 0.2, size = 1, show.legend = TRUE) +
+  geom_ysidedensity(aes(x = after_stat(scaled)), alpha = 0.2, size = 1, show.legend = TRUE) +
+  scale_color_manual(values=cond_color_movement, labels=c( '1'='Move', '2'='Press')) +
+  scale_fill_manual(values=cond_color_movement, labels=c( '1'='Move', '2'='Press')) +
+  labs(y = "TP(s)", x = "EM Response") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 25, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 25, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 25),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  scale_ysidex_continuous(guide = guide_axis(angle = 90), minor_breaks = NULL) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none")
+
+
+
+
+data_timing_motor_level_plot <- data.frame(ggpredict(stat_timing_motor_rate, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+colnames(data_timing_motor_level_plot)[6] <- 'motor_rate'
+
+ggplot(data_timing_motor_level_plot, aes(x, predicted, fill = motor_rate, color = motor_rate)) +
+  geom_line(size = 2) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = motor_rate), color = 'white', alpha = 0.2) +
+  geom_xsidedensity(aes(y = after_stat(scaled)), alpha = 0.2, size = 1, show.legend = TRUE) +
+  geom_ysidedensity(aes(x = after_stat(scaled)), alpha = 0.2, size = 1, show.legend = TRUE) +
+  scale_color_manual(values = cond_color_motor_rate, labels = c('Low', 'High')) +
+  scale_fill_manual(values = cond_color_motor_rate, labels = c('Low', 'High')) +
+  labs(y = "Timing Response (TPs) (s)", x = "Monitoring Response") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 25, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 25, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 25),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  scale_ysidex_continuous(guide = guide_axis(angle = 90), minor_breaks = NULL) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "None") 
+
+
+
+
+
+
+data_timing_motor_involvement<- data.frame(ggpredict(stat_timing_motor_involvement, terms = c("ActionDataConfidenceXaxis [all]", "MotorInvolvement")))
+# Subset the data into two groups based on the levels of the predictor variable
+move_data <- subset(data_timing_motor_involvement, group == "Move")
+press_data <- subset(data_timing_motor_involvement, group == "Press")
+
+# Perform t-test
+t_test_result <- t.test(move_data$predicted, press_data$predicted)
+
+# Output the t-test result
+print(t_test_result)
+
+# For data_reacting
+stat_reacting <- lmer(ActionTiming ~ ActionDataConfidenceXaxis + (1|SubjID), data = data_reacting)
+summary(stat_reacting) 
+data_reacting_plot <- ggpredict(stat_reacting, terms = c("ActionDataConfidenceXaxis [all]"))
+plot(data_reacting_plot, add.data = FALSE, dot.size = 2)
+
+stat_reacting_motor_rate <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(motor_rate),2) + (1|SubjID), data = data_reacting)
+summary(stat_reacting_motor_rate) 
+data_reacting_motor_rate_plot <- ggpredict(stat_reacting_motor_rate, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate"))
+plot(data_reacting_motor_rate_plot, add.data = FALSE, dot.size = 2)
+
+
+
+
+
+data_timing$conf_level <- as.factor(data_timing$conf_level)
+data_timing$conf_level <- relevel(data_timing$conf_level, ref = "High")
+stat_reacting_conf_level <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * conf_level + (1|SubjID), data = data_timing)
+summary(stat_reacting_conf_level) 
+report(stat_reacting_conf_level)
+data_reacting_conf_level_plot <- ggpredict(stat_reacting_conf_level, terms = c("ActionDataConfidenceXaxis [all]", "conf_level"))
+plot(data_reacting_conf_level_plot, add.data = FALSE, dot.size = 2)
+
+
+
+
+data_reacting$MotorSide <- as.factor(data_reacting$MotorSide)
+data_reacting$MotorSide <- relevel(data_reacting$MotorSide, ref = "DS")
+stat_reacting_motor_side <- lmer(ActionTiming ~ ActionDataConfidenceXaxis *MotorSide + (1|SubjID), data = data_reacting)
+summary(stat_reacting_motor_side) 
+report(stat_reacting_motor_side)
+data_reacting_motor_side_plot <- ggpredict(stat_reacting_motor_side, terms = c("ActionDataConfidenceXaxis [all]", "MotorSide"))
+plot(data_reacting_motor_side_plot, add.data = FALSE, dot.size = 2)
+
+
+data_reacting$MotorInvolvement <- as.factor(data_reacting$MotorInvolvement)
+data_reacting$MotorInvolvement <- relevel(data_reacting$MotorInvolvement, ref = "Press")
+stat_reacting_motor_involvement <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * MotorInvolvement  + (1|SubjID), data = data_reacting)
+summary(stat_reacting_motor_involvement)
+report(stat_reacting_motor_involvement)
+
+
+data_reacting_motor_involvement_plot <- ggpredict(stat_reacting_motor_involvement, terms = c("ActionDataConfidenceXaxis [all]", "MotorInvolvement"))
+plot(data_reacting_motor_involvement_plot, add.data = FALSE, dot.size = 2)
+
+
+data_reacting_motor_side_plot <- data.frame(ggpredict(stat_reacting_motor_side, terms = c("ActionDataConfidenceXaxis [all]", "MotorSide")))
+colnames(data_reacting_motor_side_plot)[6] <- 'MotorSide'
+
+ggplot(data_reacting_motor_side_plot, aes(x, predicted, linetype = MotorSide)) +
+  geom_line(size = 4, color = "black") +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high), fill = "grey", alpha = 0.2, color = 'black') +
+  geom_xsidedensity(aes(y = after_stat(scaled)), alpha = 0.2, size = 1, show.legend = FALSE, fill = "grey", color = "black") +
+  geom_ysidedensity(aes(x = after_stat(scaled)), alpha = 0.2, size = 1, show.legend = FALSE, fill = "grey", color = "black") +
+  labs(y = "Timing Response (s) (RTs)", x = "Monitoring Response") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 25, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 25, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 25),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  scale_ysidex_continuous(guide = guide_axis(angle = 90), minor_breaks = NULL) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none") 
+
+
+
+data_reacting_conf_level_plot <- data.frame(ggpredict(stat_reacting_conf_level, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+colnames(data_reacting_conf_level_plot)[6] <- 'Confidence'
+
+ggplot(data_reacting_conf_level_plot, aes(x, predicted, fill = Confidence, color = Confidence)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = Confidence), color = 'white', alpha = 0.2) +
+  geom_xsidedensity(aes(y = after_stat(scaled)), alpha = 0.2, size = 1, show.legend = FALSE) +
+  geom_ysidedensity(aes(x = after_stat(scaled)), alpha = 0.2, size = 1, show.legend = FALSE) +
+  scale_color_manual(values=cond_conf, labels=c( '1'='Low', '2'='High')) +
+  scale_fill_manual(values=cond_conf, labels=c( '1'='Low', '2'='High')) +
+  labs(y = "RT(s)", x = "EM Response") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 25, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 25, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 25),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  scale_ysidex_continuous(guide = guide_axis(angle = 90), minor_breaks = NULL) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none") 
+
+
+
+
+
+
+
+data_reacting_motor_involvement_plot <- data.frame(ggpredict(stat_reacting_motor_involvement, terms = c("ActionDataConfidenceXaxis [all]", "MotorInvolvement")))
+colnames(data_reacting_motor_involvement_plot)[6] <- 'MotorInvolvement'
+
+ggplot(data_reacting_motor_involvement_plot, aes(x, predicted, fill = MotorInvolvement, color = MotorInvolvement)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = MotorInvolvement), color = 'white', alpha = 0.2) +
+  geom_xsidedensity(aes(y = after_stat(scaled)), alpha = 0.2, size = 1, show.legend = TRUE) +
+  geom_ysidedensity(aes(x = after_stat(scaled)), alpha = 0.2, size = 1, show.legend = TRUE) +
+  scale_color_manual(values=cond_color_movement, labels=c( '1'='Move', '2'='Press')) +
+  scale_fill_manual(values=cond_color_movement, labels=c( '1'='Move', '2'='Press')) +
+  labs(y = "Timing Response (RTs) (s)", x = "Monitoring Response") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 25, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 25, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 25),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  scale_ysidex_continuous(guide = guide_axis(angle = 90), minor_breaks = NULL) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none") 
+
+
+
+
+data_reacting_motor_rate_plot <- data.frame(ggpredict(stat_reacting_motor_rate, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+colnames(data_reacting_motor_rate_plot)[6] <- 'motor_rate'
+
+ggplot(data_reacting_motor_rate_plot, aes(x, predicted, fill = motor_rate, color = motor_rate)) +
+  geom_line(size = 2) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = motor_rate), color = 'white', alpha = 0.2) +
+  geom_xsidedensity(aes(y = after_stat(scaled)), alpha = 0.2, size = 1, show.legend = TRUE) +
+  geom_ysidedensity(aes(x = after_stat(scaled)), alpha = 0.2, size = 1, show.legend = TRUE) +
+  scale_color_manual(values = cond_color_motor_rate, labels = c('Low', 'High')) +
+  scale_fill_manual(values = cond_color_motor_rate, labels = c('Low', 'High')) +
+  labs(y = "RT(s)", x = "EM Response") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 25, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 25, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 25, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 25),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  scale_ysidex_continuous(guide = guide_axis(angle = 90), minor_breaks = NULL) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none") 
+
+
+
+
+
+### Error Monitoring: Timing
+
+# For data_timing
+stat_move_conf_low <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(conf_level), 1) + (1|SubjID), data = subset(data_timing, MotorInvolvement == "Move"))
+summary(stat_move_conf_low)
+report(stat_move_conf_low)
+
+data_move_conf_plot <- data.frame(ggpredict(stat_move_conf_low, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+colnames(data_move_conf_plot)[6] <- 'Confidence'
+plot(ggpredict(stat_move_conf_low, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+
+
+ggplot(data_move_conf_plot, aes(x, predicted, fill = Confidence, color = Confidence)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = Confidence), color = 'white', alpha = 0.2) +
+  scale_color_manual(values = cond_conf, labels = c('Low', 'High')) +
+  scale_fill_manual(values = cond_conf, labels = c('Low', 'High')) +
+  labs(y = "Timing R. (TPs)", x = "Monitoring R. (Move)") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 30),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "None") 
+
+
+
+stat_move_conf_motor_rate <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(motor_rate), 1) + (1|SubjID), data = subset(data_timing, MotorInvolvement == "Move"))
+summary(stat_move_conf_motor_rate)
+data_move_conf_plot_motor <- data.frame(ggpredict(stat_move_conf_motor_rate, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+colnames(data_move_conf_plot_motor)[6] <- 'MotorRate'
+plot(ggpredict(stat_move_conf_motor_rate, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+
+
+ggplot(data_move_conf_plot_motor, aes(x, predicted, fill = MotorRate, color = MotorRate)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = MotorRate), color = 'white', alpha = 0.2) +
+  scale_color_manual(values=cond_color_motor_rate, labels=c('1'='Low', '2'='High')) +
+  scale_fill_manual(values=cond_color_motor_rate, labels=c('1'='Low', '2'='High')) +
+  labs(y = "Timing R. (TPs)", x = "Monitoring R. (Move)") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 30),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none") 
+
+
+
+
+
+
+
+
+stat_press_conf_low <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(conf_level), 1) + (1|SubjID), data = subset(data_timing, MotorInvolvement == "Press"))
+summary(stat_press_conf_low)
+report(stat_press_conf_low)
+data_press_conf_plot <- data.frame(ggpredict(stat_press_conf_low, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+colnames(data_press_conf_plot)[6] <- 'Confidence'
+plot(ggpredict(stat_press_conf_low, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+
+ggplot(data_press_conf_plot, aes(x, predicted, fill = Confidence, color = Confidence)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = Confidence), color = 'white', alpha = 0.2) +
+  scale_color_manual(values = cond_conf, labels = c('Low', 'High')) +
+  scale_fill_manual(values = cond_conf, labels = c('Low', 'High')) +
+  labs(y = "Timing R. (TPs)", x = "Monitoring R. (Press)") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 30),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "None") 
+
+
+
+stat_press_conf_motor_rate <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(motor_rate), 1) + (1|SubjID), data = subset(data_timing, MotorInvolvement == "Press"))
+summary(stat_press_conf_motor_rate)
+data_press_conf_plot_motor <- data.frame(ggpredict(stat_press_conf_motor_rate, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+colnames(data_press_conf_plot_motor)[6] <- 'MotorRate'
+plot(ggpredict(stat_press_conf_motor_rate, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+
+
+
+ggplot(data_press_conf_plot_motor, aes(x, predicted, fill = MotorRate, color = MotorRate)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = MotorRate), color = 'white', alpha = 0.2) +
+  scale_color_manual(values=cond_color_motor_rate, labels=c('1'='Low', '2'='High')) +
+  scale_fill_manual(values=cond_color_motor_rate, labels=c('1'='Low', '2'='High')) +
+  labs(y = "Timing R. (TPs)", x = "Monitoring R. (Press)") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 30),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none") 
+
+
+
+
+
+
+stat_nds_conf_low <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(conf_level), 1) + (1|SubjID), data = subset(data_timing, MotorSide == "NDS"))
+summary(stat_nds_conf_low)
+report(stat_nds_conf_low)
+data_nds_conf_plot <- data.frame(ggpredict(stat_nds_conf_low, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+colnames(data_nds_conf_plot)[6] <- 'Confidence'
+plot(ggpredict(stat_nds_conf_low, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+
+
+ggplot(data_nds_conf_plot, aes(x, predicted, fill = Confidence, color = Confidence)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = Confidence), color = 'white', alpha = 0.2) +
+  scale_color_manual(values = cond_conf, labels = c('Low', 'High')) +
+  scale_fill_manual(values = cond_conf, labels = c('Low', 'High')) +
+  labs(y = "Timing R. (TPs)", x = "Monitoring R. (NDS)") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 30),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "None") 
+
+
+stat_nds_conf_motor_rate <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(motor_rate), 1) + (1|SubjID), data = subset(data_timing, MotorSide == "NDS"))
+summary(stat_nds_conf_motor_rate)
+data_nds_conf_plot_motor <- data.frame(ggpredict(stat_nds_conf_motor_rate, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+colnames(data_nds_conf_plot_motor)[6] <- 'MotorRate'
+plot(ggpredict(stat_nds_conf_motor_rate, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+
+
+ggplot(data_nds_conf_plot_motor, aes(x, predicted, fill = MotorRate, color = MotorRate)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = MotorRate), color = 'white', alpha = 0.2) +
+  scale_color_manual(values=cond_color_motor_rate, labels=c('1'='Low', '2'='High')) +
+  scale_fill_manual(values=cond_color_motor_rate, labels=c('1'='Low', '2'='High')) +
+  labs(y = "Timing R. (TPs)", x = "Monitoring R. (NDS)") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 30),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none") 
+
+
+
+
+
+
+
+stat_ds_conf_low <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(conf_level), 1) + (1|SubjID), data = subset(data_timing, MotorSide == "DS"))
+summary(stat_ds_conf_low)
+data_ds_conf_plot <- data.frame(ggpredict(stat_ds_conf_low, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+colnames(data_ds_conf_plot)[6] <- 'Confidence'
+plot(ggpredict(stat_ds_conf_low, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+
+
+ggplot(data_ds_conf_plot, aes(x, predicted, fill = Confidence, color = Confidence)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = Confidence), color = 'white', alpha = 0.2) +
+  scale_color_manual(values = cond_conf, labels = c('Low', 'High')) +
+  scale_fill_manual(values = cond_conf, labels = c('Low', 'High')) +
+  labs(y = "Timing R. (TPs)", x = "Monitoring R. (DS)") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 30),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "None") 
+
+
+stat_ds_conf_motor_rate <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(motor_rate), 1) + (1|SubjID), data = subset(data_timing, MotorSide == "DS"))
+summary(stat_ds_conf_motor_rate)
+data_ds_conf_plot_motor <- data.frame(ggpredict(stat_ds_conf_motor_rate, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+colnames(data_ds_conf_plot_motor)[6] <- 'MotorRate'
+plot(ggpredict(stat_ds_conf_motor_rate, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+
+
+ggplot(data_ds_conf_plot_motor, aes(x, predicted, fill = MotorRate, color = MotorRate)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = MotorRate), color = 'white', alpha = 0.2) +
+  scale_color_manual(values=cond_color_motor_rate, labels=c('1'='Low', '2'='High')) +
+  scale_fill_manual(values=cond_color_motor_rate, labels=c('1'='Low', '2'='High')) +
+  labs(y = "Timing R. (TPs)", x = "Monitoring R. (DS)") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 30),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none") 
+
+
+
+
+## No interaction between PRESS-MOVE INTERMS OF HOW MONITORING CONFIDENCE IMPACS !
+
+
+stat__conf_multi<- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(conf_level), 1)* MotorSide + (1|SubjID), data = data_timing)
+summary(stat__conf_multi)
+plot(ggpredict(stat__conf_multi, terms = c("ActionDataConfidenceXaxis [all]", "conf_level","MotorSide")))
+anova(stat__conf_multi)
+
+stat__conf_multi2<- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(conf_level), 1)* MotorInvolvement + (1|SubjID), data = data_timing)
+summary(stat__conf_multi2)
+plot(ggpredict(stat__conf_multi2, terms = c("ActionDataConfidenceXaxis [all]", "conf_level","MotorInvolvement")))
+anova(stat__conf_multi)
+
+## MARGIAL interaction between PRESS-MOVE INTERMS OF HOW MOTOR CONF IMPACS !
+
+stat__conf_multi<- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(motor_rate), 1)* MotorSide + (1|SubjID), data = data_timing)
+summary(stat__conf_multi)
+plot(ggpredict(stat__conf_multi, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate","MotorSide")))
+anova(stat__conf_multi)
+
+stat__conf_multi2<- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(motor_rate), 1)* MotorInvolvement + (1|SubjID), data = data_timing)
+summary(stat__conf_multi2)
+plot(ggpredict(stat__conf_multi2, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate","MotorInvolvement")))
+anova(stat__conf_multi)
+
+int_MotorC_Inv <- data.frame(ggpredict(stat__conf_multi2, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate","MotorInvolvement")))
+int_MotorC_Side <- data.frame(ggpredict(stat__conf_multi, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate","MotorSide")))
+colnames(int_MotorC_Side)[6] <- 'ConfidenceMotor'
+colnames(int_MotorC_Inv)[6] <- 'ConfidenceMotor'
+colnames(int_MotorC_Side)[7] <- 'MotorSide'
+colnames(int_MotorC_Inv)[7] <- 'MotorInvolvement'
+
+
+
+
+
+
+
+
+
+# For data_reacting
+
+stat_move_conf_low <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(conf_level), 1) + (1|SubjID), data = subset(data_reacting, MotorInvolvement == "Move"))
+summary(stat_move_conf_low)
+data_move_conf_plot <- data.frame(ggpredict(stat_move_conf_low, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+colnames(data_move_conf_plot)[6] <- 'Confidence'
+plot(ggpredict(stat_move_conf_low, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+
+
+ggplot(data_move_conf_plot, aes(x, predicted, fill = Confidence, color = Confidence)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = Confidence), color = 'white', alpha = 0.2) +
+  scale_color_manual(values = cond_conf, labels = c('Low', 'High')) +
+  scale_fill_manual(values = cond_conf, labels = c('Low', 'High')) +
+  labs(y = "Timing R. (RTs)", x = "Monitoring R. (Move)") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 30),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "None") 
+
+stat_move_motor_low <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(motor_rate), 1) + (1|SubjID), data = subset(data_reacting, MotorInvolvement == "Move"))
+summary(stat_move_motor_low)
+data_move_conf_plot <- data.frame(ggpredict(stat_move_motor_low, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+colnames(data_move_conf_plot)[6] <- 'MotorRate'
+plot(ggpredict(stat_move_motor_low, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+
+ggplot(data_move_conf_plot, aes(x, predicted, fill = MotorRate, color = MotorRate)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = MotorRate), color = 'white', alpha = 0.2) +
+  scale_color_manual(values=cond_color_motor_rate, labels=c('1'='Low', '2'='High')) +
+  scale_fill_manual(values=cond_color_motor_rate, labels=c('1'='Low', '2'='High')) +
+  labs(y = "Timing R. (RTs)", x = "Monitoring R. (Move)") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 30),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none") 
+
+
+
+stat_press_conf_low <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(conf_level), 1) + (1|SubjID), data = subset(data_reacting, MotorInvolvement == "Press"))
+summary(stat_press_conf_low)
+data_press_conf_plot <- data.frame(ggpredict(stat_press_conf_low, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+colnames(data_press_conf_plot)[6] <- 'Confidence'
+plot(ggpredict(stat_press_conf_low, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+
+
+ggplot(data_press_conf_plot, aes(x, predicted, fill = Confidence, color = Confidence)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = Confidence), color = 'white', alpha = 0.2) +
+  scale_color_manual(values=cond_conf, labels=c( '2'='Low', '1'='High')) +
+  scale_fill_manual(values=cond_conf, labels=c( '2'='Low', '1'='High')) +
+  labs(y = "Timing R. (RTs)", x = "Monitoring R. (Press)") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 30),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none") 
+
+
+
+
+stat_press_motor_low <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(motor_rate), 2) + (1|SubjID), data = subset(data_reacting, MotorInvolvement == "Press"))
+summary(stat_press_motor_low)
+data_press_conf_plot <- data.frame(ggpredict(stat_press_motor_low, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+colnames(data_press_conf_plot)[6] <- 'MotorRate'
+plot(ggpredict(stat_press_motor_low, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+
+
+ggplot(data_press_conf_plot, aes(x, predicted, fill = MotorRate, color = MotorRate)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = MotorRate), color = 'white', alpha = 0.2) +
+  scale_color_manual(values=cond_color_motor_rate, labels=c('1'='Low', '2'='High')) +
+  scale_fill_manual(values=cond_color_motor_rate, labels=c('1'='Low', '2'='High')) +
+  labs(y = "Timing R. (RTs)", x = "Monitoring R. (Press)") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 30),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none") 
+
+
+
+
+stat_nds_conf_low <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(conf_level), 1) + (1|SubjID), data = subset(data_reacting, MotorSide == "NDS"))
+summary(stat_nds_conf_low)
+data_nds_conf_plot <- data.frame(ggpredict(stat_nds_conf_low, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+colnames(data_nds_conf_plot)[6] <- 'Confidence'
+plot(ggpredict(stat_nds_conf_low, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+
+
+ggplot(data_nds_conf_plot, aes(x, predicted, fill = Confidence, color = Confidence)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = Confidence), color = 'white', alpha = 0.2) +
+  scale_color_manual(values = cond_conf, labels = c('Low', 'High')) +
+  scale_fill_manual(values = cond_conf, labels = c('Low', 'High')) +
+  labs(y = "Timing R. (RTs)", x = "Monitoring R. (NDS)") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 30),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none") 
+
+stat_nds_motor_low <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(motor_rate), 1) + (1|SubjID), data = subset(data_reacting, MotorSide == "NDS"))
+summary(stat_nds_motor_low)
+data_nds_conf_plot <- data.frame(ggpredict(stat_nds_motor_low, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+colnames(data_nds_conf_plot)[6] <- 'MotorRate'
+plot(ggpredict(stat_nds_motor_low, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+
+ggplot(data_nds_conf_plot, aes(x, predicted, fill = MotorRate, color = MotorRate)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = MotorRate), color = 'white', alpha = 0.2) +
+  scale_color_manual(values=cond_color_motor_rate, labels=c('1'='Low', '2'='High')) +
+  scale_fill_manual(values=cond_color_motor_rate, labels=c('1'='Low', '2'='High')) +
+  labs(y = "Timing R. (RTs)", x = "Monitoring R. (NDS)") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 30),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none") 
+
+
+
+
+
+stat_ds_conf_low <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(conf_level), 1) + (1|SubjID), data = subset(data_reacting, MotorSide == "DS"))
+summary(stat_ds_conf_low)
+data_ds_conf_plot <- data.frame(ggpredict(stat_ds_conf_low, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+colnames(data_ds_conf_plot)[6] <- 'Confidence'
+plot(ggpredict(stat_ds_conf_low, terms = c("ActionDataConfidenceXaxis [all]", "conf_level")))
+
+
+ggplot(data_ds_conf_plot, aes(x, predicted, fill = Confidence, color = Confidence)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = Confidence), color = 'white', alpha = 0.2) +
+  scale_color_manual(values = cond_conf, labels = c('Low', 'High')) +
+  scale_fill_manual(values = cond_conf, labels = c('Low', 'High')) +
+  labs(y = "Timing R. (RTs)", x = "Monitoring R. (DS)") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 30),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "None") 
+
+stat_ds_motor_low <- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(motor_rate), 1) + (1|SubjID), data = subset(data_reacting, MotorSide == "DS"))
+summary(stat_ds_motor_low)
+data_ds_conf_plot <- data.frame(ggpredict(stat_ds_motor_low, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+colnames(data_ds_conf_plot)[6] <- 'MotorRate'
+plot(ggpredict(stat_ds_motor_low, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate")))
+
+
+ggplot(data_ds_conf_plot_motor, aes(x, predicted, fill = MotorRate, color = MotorRate)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = MotorRate), color = 'white', alpha = 0.2) +
+  scale_color_manual(values=cond_color_motor_rate, labels=c('1'='Low', '2'='High')) +
+  scale_fill_manual(values=cond_color_motor_rate, labels=c('1'='Low', '2'='High')) +
+  labs(y = "Timing R. (RTs)", x = "Monitoring R. (DS)") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black",size = 30),
+        strip.text = element_text(color = "black",size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none") 
+
+## No interaction between PRESS-MOVE INTERMS OF HOW MONITORING CONFIDENCE IMPACS !
+
+
+stat__conf_multi<- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(conf_level), 1)* MotorSide + (1|SubjID), data = data_reacting)
+summary(stat__conf_multi)
+plot(ggpredict(stat__conf_multi, terms = c("ActionDataConfidenceXaxis [all]", "conf_level","MotorSide")))
+anova(stat__conf_multi)
+
+stat__conf_multi2<- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(conf_level), 1)* MotorInvolvement + (1|SubjID), data = data_reacting)
+summary(stat__conf_multi2)
+plot(ggpredict(stat__conf_multi2, terms = c("ActionDataConfidenceXaxis [all]", "conf_level","MotorInvolvement")))
+anova(stat__conf_multi)
+
+int_MotorC_Inv <- data.frame(ggpredict(stat__conf_multi2, terms = c("ActionDataConfidenceXaxis [all]", "conf_level","MotorInvolvement")))
+int_MotorC_Side <- data.frame(ggpredict(stat__conf_multi, terms = c("ActionDataConfidenceXaxis [all]", "conf_level","MotorSide")))
+colnames(int_MotorC_Side)[6] <- 'ConfidenceMonitoring'
+colnames(int_MotorC_Inv)[6] <- 'ConfidenceMonitoring'
+colnames(int_MotorC_Side)[7] <- 'MotorSide'
+colnames(int_MotorC_Inv)[7] <- 'MotorInvolvement'
+
+
+
+
+
+## MARGIAL interaction between PRESS-MOVE INTERMS OF HOW MOTOR CONF IMPACS !
+
+stat__conf_multi<- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(motor_rate), 1)* MotorSide + (1|SubjID), data = data_reacting)
+summary(stat__conf_multi)
+plot(ggpredict(stat__conf_multi, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate","MotorSide")))
+anova(stat__conf_multi)
+
+stat__conf_multi2<- lmer(ActionTiming ~ ActionDataConfidenceXaxis * relevel(as.factor(motor_rate), 1)* MotorInvolvement + (1|SubjID), data = data_reacting)
+summary(stat__conf_multi2)
+plot(ggpredict(stat__conf_multi2, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate","MotorInvolvement")))
+anova(stat__conf_multi)
+
+int_MotorC_Inv <- data.frame(ggpredict(stat__conf_multi2, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate","MotorInvolvement")))
+int_MotorC_Side <- data.frame(ggpredict(stat__conf_multi, terms = c("ActionDataConfidenceXaxis [all]", "motor_rate","MotorSide")))
+colnames(int_MotorC_Side)[6] <- 'ConfidenceMotor'
+colnames(int_MotorC_Inv)[6] <- 'ConfidenceMotor'
+colnames(int_MotorC_Side)[7] <- 'MotorSide'
+colnames(int_MotorC_Inv)[7] <- 'MotorInvolvement'
+
+
+
+
+ggplot(int_MotorC_Side, aes(x, predicted, fill = ConfidenceMotor, color = ConfidenceMotor)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = ConfidenceMotor), color = 'white', alpha = 0.2) +
+  scale_color_manual(values = cond_color_motor_rate, labels = c('1' = 'Low', '2' = 'High')) +
+  scale_fill_manual(values = cond_color_motor_rate, labels = c('1' = 'Low', '2' = 'High')) +
+  labs(y = "Timing R. (RTs)", x = "Monitoring R.") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"),
+        axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black", size = 30),
+        strip.text = element_text(color = "black", size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none") +
+  facet_grid(. ~ MotorSide)
+
+
+
+ggplot(int_MotorC_Inv, aes(x, predicted, fill = ConfidenceMotor, color = ConfidenceMotor)) +
+  geom_line(size = 4) +
+  geom_ribbon(aes(ymin = conf.low, ymax = conf.high, fill = ConfidenceMotor), color = 'white', alpha = 0.2) +
+  scale_color_manual(values = cond_color_motor_rate, labels = c('1' = 'Low', '2' = 'High')) +
+  scale_fill_manual(values = cond_color_motor_rate, labels = c('1' = 'Low', '2' = 'High')) +
+  labs(y = "Timing R. (RTs)", x = "Monitoring R.") +
+  theme_classic() +
+  theme(axis.line = element_line(colour = "black"),
+        axis.text.x = element_text(angle = 90, vjust = .5),
+        legend.title.align = 0.5,
+        plot.subtitle = element_text(color = "black", size = 30, face = "bold.italic"),
+        plot.caption = element_text(color = "black", size = 30, face = "italic"),
+        axis.title.x = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.title.y = element_text(color = "black", size = 30, hjust = 0.5),
+        axis.text = element_text(color = "black", size = 30),
+        strip.text = element_text(color = "black", size = 18),
+        strip.background = element_rect(fill = NA, size = NA, color = NA)) +
+  theme(axis.line = element_line(colour = "black"),
+        ggside.panel.scale = .2,
+        ggside.axis.text = element_text(color = "black", size = 10, hjust = 0.5),
+        legend.position = "none") +
+  facet_grid(. ~ MotorInvolvement)
+
+
+
+
+
+
+
+
+
+
