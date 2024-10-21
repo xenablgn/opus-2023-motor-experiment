@@ -27,21 +27,25 @@ In line with the Clock Hypothesis, error monitoring performance improved under c
 The analysis consists of three main components, focusing on general performance metrics of response time (RT) and time perception (TP) across various manipulated conditions:
 
 ### 1. Response Time (RT) and Time Perception (TP) Performance
-- **Objective**: Assess participants' RT and TP performance under varying conditions of motor demand and handedness.
+- **Objective**: This analysis aims to assess participants' RT and TP performance under varying conditions of motor demand (i.e., button presses vs. joystick movements) and handedness (dominant vs. non-dominant hand). Understanding these performance metrics is crucial for unraveling the cognitive processes involved in temporal error monitoring.
+
 - **Methods**:
-  - Calculate summary statistics (mean, standard deviation) and Coefficient of Variation (CV) for RTs and TPs across subjects and sessions.
-  - Employ linear mixed-effects models (LMMs) to analyze the impact of motor involvement and motor side on RT and TP performance.
+  - **Statistical Calculations**: We calculate summary statistics, including mean and standard deviation (SD), for RTs and TPs across subjects and sessions. The Coefficient of Variation (CV) is also computed to evaluate the variability of responses relative to the mean, offering insights into the consistency of performance across different conditions.
+  - **Modeling Approaches**: Linear mixed-effects models (LMMs) are employed to analyze the impact of motor involvement (Press vs. Move) and motor side (dominant vs. non-dominant) on RT and TP performance. This modeling accounts for both fixed effects (such as task conditions) and random effects (such as individual differences), thereby providing a comprehensive understanding of how these factors influence participants' timing and reaction capabilities.
 
 ### 2. Error Monitoring
-- **Objective**: Evaluate the correlation between single-trial error monitoring performance, TP/RT performance, and confidence levels across different conditions.
+- **Objective**: The focus of this analysis is to evaluate the correlation between single-trial error monitoring performance, TP/RT performance, and confidence levels across different experimental conditions. This relationship is essential for understanding how participants evaluate their own performance and the mechanisms underlying metacognitive processes.
+
 - **Methods**:
-  - Summarize error monitoring performance based on varying motor demands and dominant motor sides.
-  - Assess error monitoring performance at different confidence levels, analyzing how these levels vary under distinct conditions to test the underlying hypotheses.
+  - **Performance Summarization**: We summarize error monitoring performance by analyzing responses across varying motor demands and dominant motor sides. This involves categorizing error monitoring data based on task conditions to identify patterns and differences in monitoring efficacy.
+  - **Confidence Assessment**: Error monitoring performance is further assessed at different confidence levels. We analyze how confidence ratings vary under distinct conditions to test our underlying hypotheses regarding the Clock and Motor Hypotheses. Statistical tests will be applied to ascertain whether confidence levels significantly influence monitoring accuracy, with special attention to high-confidence versus low-confidence trials.
 
 ### 3. Confidence in Decision-Making
-- **Objective**: Explore the relationships between confidence levels and decision time across different manipulated conditions.
+- **Objective**: This analysis explores the intricate relationships between confidence levels and decision time across manipulated conditions in both TP and RT tasks. Understanding these dynamics can shed light on how motor variance and task demands affect cognitive assessments during temporal tasks.
+
 - **Methods**:
-  - Fit linear mixed-effects models to investigate how decision time and confidence are influenced by the degree of motor demand (involvement) and motor dominance.
+  - **Model Fitting**: We fit linear mixed-effects models to investigate how decision time and confidence ratings are influenced by the degree of motor demand (involvement) and motor dominance. The models will allow us to parse out the fixed effects of task conditions and the random effects associated with individual participants, thereby providing insights into how motor demands impact decision-making processes.
+  - **Statistical Analysis**: We will evaluate the significance of the relationships between decision times and confidence levels, examining whether higher confidence correlates with shorter decision times across conditions. Additionally, we will investigate how induced variance in motor tasks may alter the decision-making landscape, potentially revealing the underlying cognitive mechanisms at play.
 
 ### Visualization
 
@@ -50,7 +54,6 @@ All analyses include plots illustrating the relationships between RT, TP, confid
 ## Acknowledgments
 
 - **Funding**: This work was supported by OPUS grant 2019/35/B/HS6/04389 to TWK from the National Center of Science in Poland.
-- **Collaborators**: [Any Collaborators]
 
 ## Repository Structure
 
@@ -68,5 +71,3 @@ All analyses include plots illustrating the relationships between RT, TP, confid
 │   ├── figures                   # Directory for storing generated figures
 │   └── reports                   # Directory for storing generated reports and summaries
 └── README.md                    # This README file
-
-
